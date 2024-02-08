@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Colorful Grid Game</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    table {
+      border-collapse: collapse;
+    }
+
+    td {
+      width: 50px;
+      height: 50px;
+      border: 1px solid #000;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<table id="grid">
+  <tr>
+    <td onclick="cellClick(this)" style=""></td>
+    <td onclick="cellClick(this)" style=""></td>
+    <td onclick="cellClick(this)" style=""></td>
+    <td onclick="cellClick(this)" style=""></td>
+  </tr>
+  <tr>
+    <td onclick="cellClick(this)" style=""></td>
+    <td onclick="cellClick(this)" style=""></td>
+    <td onclick="cellClick(this)" style=""></td>
+    <td onclick="cellClick(this)" style=""></td>
+  </tr>
+  <tr>
+    <td onclick="cellClick(this)" style=""></td>
+    <td onclick="cellClick(this)" style=""></td>
+    <td onclick="cellClick(this)" style=""></td>
+    <td onclick="cellClick(this)" style=""></td>
+  </tr>
+  <tr>
+    <td onclick="cellClick(this)" style=""></td>
+    <td onclick="cellClick(this)" style=""></td>
+    <td onclick="cellClick(this)" style=""></td>
+    <td onclick="cellClick(this)" style=""></td>
+  </tr>
+</table>
+
+<script>
+  let score = 0;
+  let time = 30; // seconds
+  let timer;
+
+  function startGame(button) {
+    resetGame();
+    setRandomColors();
+    updateTimer();
+	button.disabled = true;
+    timer = setInterval(function() {
+      if (time <= 0) {
+        endGame();
+		button.disabled = false;
+      } else {
+		time--;
+		updateTimer();
+	  }
+    }, 1000);
+  }
+
+  function resetGame() {
+    score = 0;
+    time = 30;
+    updateScore();
+    updateTimer();
+    resetGrid();
+  }
+
+  function endGame() {
+    clearInterval(timer);
+    alert("Game Over! Your score: " + score);
+  }
+
+  function cellClick(cell) {
+    if (cell.style.backgroundColor !== "") {
+      // Clicked on a colored cell
+      score++;
+      updateScore();
+      cell.style.backgroundColor = "";
+      setRandomColor();
+      //if (score >= 222) {
+      //  endGame(); // Game ends when a certain score is reached
+      //}
+    }
+  }
+
+  function updateScore() {
+    document.getElementById("score").innerText = "Score: " + score;
+  }
+
+  function updateTimer() {
+    document.getElementById("timer").innerText = "Time: " + time + "s";
+  }
+
+  function resetGrid() {
+    const cells = document.querySelectorAll("#grid td");
+    cells.forEach(cell => {
+      cell.style.backgroundColor = "";
+    });
+  }
+
+  function setRandomColors() {
+    const cells = document.querySelectorAll("#grid td");
+    const randomIndexes = getRandomIndexes(cells.length, 3);
+
+    cells.forEach((cell, index) => {
+      if (randomIndexes.includes(index)) {
+        cell.style.backgroundColor = getRandomColor();
+      }
+    });
+  }
+
+  function getRandomIndexes(max, count) {
+    const indexes = [];
+    while (indexes.length < count) {
+      const randomIndex = Math.floor(Math.random() * max);
+      if (!indexes.includes(randomIndex)) {
+        indexes.push(randomIndex);
+      }
+    }
+    return indexes;
+  }
+
+  function setRandomColor() {
+    const cells = document.querySelectorAll("#grid td");
+    if (cells.length > 0) {
+      let randomCell;
+	  do {
+	    randomCell = cells[Math.floor(Math.random() * cells.length)];
+	  } while (randomCell.style.backgroundColor != "")
+      const randomColor = getRandomColor();
+      randomCell.style.backgroundColor = randomColor;
+    } else {
+      // All cells are colored, continue the game or end it based on your logic
+      // endGame();
+    }
+  }
+
+  function getRandomColor() {
+    const letters = "0123456789ABCDEF";
+    let color = "#";
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
+</script>
+
+<div>
+  <button onclick="startGame(this)">Start Game</button>
+  <p id="score">Score: 0</p>
+  <p id="timer">Time: 30s</p>
+</div>
+
+</body>
+</html>
